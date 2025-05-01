@@ -10,12 +10,9 @@ setup(
     packages=find_packages(),  # Automatically finds all packages/modules
     install_requires=[
         # List dependencies here, e.g.:
-        'requests',
         'numpy',
-        'math',
         'scipy',
-        'typing',
-        'copy'
+        'typing'
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
