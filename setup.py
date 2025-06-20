@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='FSSLibrary',  # Replace with your package name
-    version='0.1.0',
+    version='0.1.1',
     description='Set of python library made specifically for Floating and Submerged Structures course.',
     author='Shagun Agarwal, Oriol Colomés',
     author_email='shagun.1995@gmail.com, j.o.colomesgene@tudelft.nl',
