@@ -1,3 +1,24 @@
+# BeamMatrices.py
+# version 1.2
+
+# This file contains the functions to calculate the mass, stiffness and damping matrices for 2D and 3D beams
+# The functions are:
+# Beam2DMatrices(m, EA, EI, NodeCoord)
+# Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord)
+# The functions take the following inputs:
+# m         - mass per unit length [kg/m]
+# EA        - axial stiffness [N]
+# EI        - bending stiffness [N.m2]
+# GJ        - torsional stiffness [N.m2]
+# Im        - mass moment of inertia [kg.m2]
+# NodeCoord - ([xl, yl], [xr, yr]) or ([xl, yl, zl], [xr, yr, zr])
+#           - left (l) and right (r) node coordinates
+# The functions return the following outputs:
+# M         - mass matrix [kg]
+# K         - stiffness matrix [N/m]
+# Q         - external load matrix
+
+
 import numpy as np
 import math
 def Beam2DMatrices(m, EA, EI, NodeCoord):
@@ -70,16 +91,31 @@ def Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord):
     zr = NodeCoord[1][2]    # z-coordinate of rigth node
     L = np.sqrt((xr - xl)**2 + (yr - yl)**2 + (zr - zl)**2)    # length
     
-    # 2 - calculate transformation matrix T
-    C = (xr-xl)/L
-    S = (yr-yl)/L
-    # T in this is different from T in the above Beam 2D function
-    T = np.array([[C, S, 0], [-S, C, 0], [0, 0, 1]])
+    # calculate the direction cosines
+    dx = (xr - xl)/L
+    dy = (yr - yl)/L
+    dz = (zr - zl)/L
+
+    ldc_t = np.array([dx, dy, dz])
+
+    # Case 1
+    khat = np.array([0, 0, -1])
+    ldc_n1 = np.cross(ldc_t, khat)
+    ldc_n1_norm = np.linalg.norm(ldc_n1)
+
+    if ldc_n1_norm < 1e-6:
+        # Case 2
+        print("Case 2")
+        jhat = np.array([0, -1, 0])
+        ldc_n1 = np.cross(ldc_t, jhat)
+        ldc_n1_norm = np.linalg.norm(ldc_n1)
+
+    ldc_n1 = ldc_n1/np.linalg.norm(ldc_n1)
+
+    ldc_n2 = np.cross(ldc_t, ldc_n1)
+
+    T = np.array([ldc_t, ldc_n1, ldc_n2])
     
-    # Only support rotation in XY plane
-    if(abs(zr - zl) > 1e-6):
-        print("Error, Only supports rotation in XY plane")
-        T = np.array([[1, 0, 0], [0, 1, 0], [0,0,1]])        
     
     T = np.asarray(np.bmat([[T, np.zeros((3,3))], [np.zeros((3, 3)), T]]))    
     T = np.asarray(np.bmat([[T, np.zeros((6,6))], [np.zeros((6, 6)), T]]))    
