@@ -2,6 +2,7 @@ import warnings as _warn
 from FSSLibrary import BeamMatrices
 from FSSLibrary import LinearWave
 from FSSLibrary import MoorLib
+from FSSLibrary import FFTBasic
 
 # Ignore future warnings
 _warn.simplefilter(action="ignore", category=FutureWarning)
