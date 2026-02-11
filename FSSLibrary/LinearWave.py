@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import optimize
+from FSSLibrary.Constants import g, rhoW
 
 def dispersionRelSol(sol, *data):
     g, d, T = data
@@ -11,18 +12,36 @@ def getWaveLen(g, d, T):
     root = optimize.fsolve(dispersionRelSol, g/2/np.pi*T*T ,args=data)
     return(root[0])
 
-class LinearWave2D:
-    # LinearWave2D(rhoW, g, d, T, H, phi=0, x0=0, msg=True)
-    # rhoW, gravity, water-depth, time-period, wave-height, wave-phase, x0, printMsg
-    def __init__(self, rhoW, g, d, T, H, phi=0.0, x0=0.0, msg=True):
+class LinearWave2D:    
+    
+    def __init__(            
+            self, d:float, T:float, H:float, *,
+            phi:float=0.0, x0:float=0.0, L:float|None=None, msg:bool=True):
+        """
+        Initialize a LinearWave object.
+        Args:
+            d (float): Water depth
+            T (float): Wave period
+            H (float): Wave height
+            phi (float, optional): Phase angle. Defaults to 0.0.
+            x0 (float, optional): Initial position. Defaults to 0.0.
+            L (float | None, optional): Wave length. If None, calculated from dispersion relation. Defaults to None.
+            msg (bool, optional): Print wave parameters. Defaults to True.
+        """
+        
         self.rhoW = rhoW
         self.g = g
         self.d = d
         self.x0 = x0
         self.phi = phi                
         self.T = T        
-        self.H = H                
-        self.L = getWaveLen(self.g, d, T)        
+        self.H = H 
+        
+        if L is not None:
+            self.L = L
+        else:               
+            self.L = getWaveLen(self.g, d, T)        
+
         self.k = 2*np.pi/self.L
         self.w = 2*np.pi/self.T
 
@@ -30,11 +49,12 @@ class LinearWave2D:
             print('Wave-Length L = ', self.L)
             print('d/L = ', self.d / self.L)
         
-    def wavePhase(self, t, x):
+        
+    def wavePhase(self, t: float, x: float) -> float:
         return self.k*(x-self.x0) - self.w*t + self.phi
         
     
-    def waveElevation(self, t, x):
+    def waveElevation(self, t: float, x: float) -> float:
         et = self.H / 2 * np.cos( self.wavePhase(t, x) )
         return et
     
