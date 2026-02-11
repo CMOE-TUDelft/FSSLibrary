@@ -13,15 +13,15 @@ class SpecStruct:
         """
         Wave spectrum structure containing spectral parameters
         
-        Parameters:
-        Hs (float): Significant wave height [m]
-        Tp (float): Peak wave period [s]
-        d (float): Water depth [m]
-        omega (array): Angular frequency array [rad/s]
-        S (array): Power spectral density array [m^2*s]
-        A (array): Wave amplitude array [m]        
-        phRad (array): Phase array [rad]                
-        k (array | None, optional): Wave number array [rad/m]
+        ## Parameters:
+        - Hs (float): Significant wave height [m]
+        - Tp (float): Peak wave period [s]
+        - d (float): Water depth [m]
+        - omega (array): Angular frequency array [rad/s]
+        - S (array): Power spectral density array [m^2*s]
+        - A (array): Wave amplitude array [m]        
+        - phRad (array): Phase array [rad]                
+        - k (array | None, optional): Wave number array [rad/m]
         """
         
         N = len(omega)
@@ -83,12 +83,12 @@ class SpecStruct:
         """
         Calculate wave elevation at location x and time(s) t by summing all wave components.
         
-        Parameters:
-        t (float or array): Time or time array [s]
-        x (float): Horizontal position [m]
+        ## Parameters:
+        - t (float or array): Time or time array [s]
+        - x (float): Horizontal position [m]
         
-        Returns:
-        float or array: Wave elevation [m]
+        ## Returns:
+        - float or array: Wave elevation [m]
         """
         
         if isinstance(t, float):
