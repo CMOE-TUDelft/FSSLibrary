@@ -8,6 +8,25 @@ def dispersionRelSol(sol, *data):
     return (L-(g/2/np.pi*T*T*np.tanh(2*np.pi/L*d)))
 
 def getWaveLen(g, d, T):
+    """
+    Calculate the wave length using the dispersion relation.
+
+    ## Parameters:
+    - g (float): Gravitational acceleration
+    - d (float): Water depth
+    - T (float): Wave period
+    
+    ## Returns:
+    - float: Wave length
+    
+    ## Notes: 
+    - Remember that `fsolve` is used to find the roots of a function, and it requires an initial guess. The initial guess is crucial for the convergence of the solution. In this case, we can use the deep water wave length as the initial guess, which is given by L = g/2/pi * T^2.
+    - `fsolve` (to `optimize.brentq`) are both, ROOT FINDING METHODS. `fsolve` is a more general method that can find roots of any function, while `brentq` is specifically designed for finding roots of continuous functions. In this case, since we are dealing with a continuous function (the dispersion relation), `brentq` is more appropriate and efficient for finding the wave length.
+    - For minimisation you can use `optimize.minimize_scalar` or `optimize.minimize`, but in this case, since we are interested in finding the wave length that satisfies the dispersion relation (i.e., where the function equals zero), root finding is the correct approach. Minimisation would not be appropriate here because we are not trying to find the minimum value of a function, but rather the specific value of L that makes the function equal to zero.
+    - ROOT FINDING IS NOT THE SAME AS MINIMISATION. 
+        - Root finding is about finding the input values that make a function equal to zero.
+        - Minimisation is about finding the input values that make a function reach its minimum value.
+    """
     data = (g, d, T)
     root = optimize.fsolve(dispersionRelSol, g/2/np.pi*T*T ,args=data)
     return(root[0])
@@ -19,14 +38,15 @@ class LinearWave2D:
             phi:float=0.0, x0:float=0.0, L:float|None=None, msg:bool=True):
         """
         Initialize a LinearWave object.
-        Args:
-            d (float): Water depth
-            T (float): Wave period
-            H (float): Wave height
-            phi (float, optional): Phase angle. Defaults to 0.0.
-            x0 (float, optional): Initial position. Defaults to 0.0.
-            L (float | None, optional): Wave length. If None, calculated from dispersion relation. Defaults to None.
-            msg (bool, optional): Print wave parameters. Defaults to True.
+
+        ## Parameters:
+        - d (float): Water depth
+        - T (float): Wave period
+        - H (float): Wave height
+        - phi (float, optional): Phase angle. Defaults to 0.0.
+        - x0 (float, optional): Initial position. Defaults to 0.0.
+        - L (float | None, optional): Wave length. If None, calculated from dispersion relation. Defaults to None.
+        - msg (bool, optional): Print wave parameters. Defaults to True.
         """
         
         self.rhoW = rhoW
