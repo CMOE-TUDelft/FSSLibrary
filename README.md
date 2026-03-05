@@ -1,5 +1,7 @@
 # FSSLibrary
 
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://cmoe-tudelft.github.io/FSSLibrary/)
+
 A comprehensive Python library designed for the **Floating and Submerged Structures** course at TU Delft. This library provides essential tools for marine and ocean engineering calculations, including linear wave theory, structural beam analysis, mooring systems, and wave spectrum processing.
 
 ## Features
