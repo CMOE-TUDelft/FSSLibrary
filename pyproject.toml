@@ -2,6 +2,20 @@
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
+
+[project.urls]
+Homepage = "https://github.com/CMOE-TUDelft/FSSLibrary"
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[tool.setuptools.dynamic]
+version = { attr = "FSSLibrary.__version__" }
+dependencies = {file = ["requirements.txt"]}
+
+
 [project]
 name = "FSSLibrary"
 dynamic = ["version"]
@@ -12,20 +26,9 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "numpy", "scipy"
-]
-
-[project.urls]
-Homepage = "https://github.com/CMOE-TUDelft/FSSLibrary"
-
-[tool.setuptools.packages.find]
-
-[tool.setuptools.dynamic]
-version = { attr = "FSSLibrary.__version__" }
