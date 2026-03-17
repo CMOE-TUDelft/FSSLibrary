@@ -4,9 +4,16 @@ import copy
 
 #----- Start Constants -----
 g = 9.81
+"""gravitational acceleration [m/s^2]"""
+
 rad2deg = 90 / np.pi
+"""radian to degree conversion factor"""
+
 HStartGlb = 10.0
+"""initial guess for horizontal tension [N]"""
+
 LBedStartGlb = 10.0
+"""initial guess for bed length [m]"""
 #----- End Constants -----
 
 
