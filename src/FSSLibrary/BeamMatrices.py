@@ -1,33 +1,42 @@
-# BeamMatrices.py
-# version 1.2
+"""
+BeamMatrices.py
 
-# This file contains the functions to calculate the mass, stiffness and damping matrices for 2D and 3D beams
-# The functions are:
-# Beam2DMatrices(m, EA, EI, NodeCoord)
-# Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord)
-# The functions take the following inputs:
-# m         - mass per unit length [kg/m]
-# EA        - axial stiffness [N]
-# EI        - bending stiffness [N.m2]
-# GJ        - torsional stiffness [N.m2]
-# Im        - mass moment of inertia [kg.m2]
-# NodeCoord - ([xl, yl], [xr, yr]) or ([xl, yl, zl], [xr, yr, zr])
-#           - left (l) and right (r) node coordinates
-# The functions return the following outputs:
-# M         - mass matrix [kg]
-# K         - stiffness matrix [N/m]
-# Q         - external load matrix
+This file contains the functions to calculate the mass, stiffness and damping matrices for 2D and 3D beams
+
+The functions are:
+- Beam2DMatrices(m, EA, EI, NodeCoord)
+- Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord)
+
+The functions take the following inputs:
+- m         - mass per unit length [kg/m]
+- EA        - axial stiffness [N]
+- EI        - bending stiffness [N.m2]
+- GJ        - torsional stiffness [N.m2]
+- Im        - mass moment of inertia [kg.m2]
+- NodeCoord - ([xl, yl], [xr, yr]) or ([xl, yl, zl], [xr, yr, zr])
+    - left (l) and right (r) node coordinates
+
+The functions return the following outputs:
+- M         - mass matrix [kg]
+- K         - stiffness matrix [N/m]
+- Q         - external load matrix
+"""
 
 
 import numpy as np
 import math
 def Beam2DMatrices(m, EA, EI, NodeCoord):
-# Inputs:
-# m         - mass per unit length [kg/m]
-# EA        - axial stiffness [N]
-# EI        - bending stiffness [N.m2]
-# NodeCoord - ([xl, yl], [xr, yr])      
-#           - left (l) and right (r) node coordinates
+    """
+    Calculate the mass, stiffness and damping matrices for a 2D beam
+
+    Inputs:
+    - m         - mass per unit length [kg/m]
+    - EA        - axial stiffness [N]
+    - EI        - bending stiffness [N.m2]
+    - NodeCoord - ([xl, yl], [xr, yr])      
+        - left (l) and right (r) node coordinates
+    """
+
 
     # 1 - calculate length of beam (L) and orientation alpha
     xl = NodeCoord[0][0]    # x-coordinate of left node
@@ -75,12 +84,18 @@ def Beam2DMatrices(m, EA, EI, NodeCoord):
 
 
 def Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord):
-# Inputs:
-# m         - mass per unit length [kg/m]
-# EA        - axial stiffness [N]
-# EI        - bending stiffness [N.m2]
-# NodeCoord - ([xl, yl, zl], [xr, yr, zr])
-#           - left (l) and right (r) node coordinates
+    """
+    Calculate the mass, stiffness and damping matrices for a 3D beam
+
+    Inputs:
+    - m         - mass per unit length [kg/m]
+    - EA        - axial stiffness [N]
+    - EI        - bending stiffness [N.m2]
+    - GJ        - torsional stiffness [N.m2]
+    - Im        - mass moment of inertia per unit length [kg.m2 / m]
+    - NodeCoord - ([xl, yl, zl], [xr, yr, zr])
+        - left (l) and right (r) node coordinates
+    """
 
     # 1 - calculate length of beam (L) and orientation alpha
     xl = NodeCoord[0][0]    # x-coordinate of left node
@@ -140,13 +155,13 @@ def Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord):
     M = np.array([[140, 0, 0, 0, 0, 0, 70, 0, 0, 0, 0, 0], 
                   [0, 156, 0, 0, 0, 22*L, 0, 54, 0, 0, 0, -13*L], 
                   [0, 0, 156, 0, 22*L, 0, 0, 0, 54, 0, 13*L, 0], 
-                  [0, 0, 0, 140*Im, 0, 0, 0, 0, 0, 70*Im, 0, 0],
+                  [0, 0, 0, 140*Im/m, 0, 0, 0, 0, 0, 70*Im/m, 0, 0],
                   [0, 0, 22*L, 0, 4*L2, 0, 0, 0, -13*L, 0, -3*L2, 0], 
                   [0, 22*L, 0, 0, 0, 4*L2, 0, 13*L, 0, 0, 0, -3*L2], 
                   [70, 0, 0, 0, 0, 0, 140, 0, 0, 0, 0, 0], 
                   [0, 54, 0, 0, 0, 13*L, 0, 156, 0, 0, 0, -22*L], 
                   [0, 0, 54, 0, -13*L, 0, 0, 0, 156, 0, 22*L, 0], 
-                  [0, 0, 0, 70*Im, 0, 0, 0, 0, 0, 140*Im, 0, 0],
+                  [0, 0, 0, 70*Im/m, 0, 0, 0, 0, 0, 140*Im/m, 0, 0],
                   [0, 0, 13*L, 0, -3*L2, 0, 0, 0, 22*L, 0, 4*L2, 0],
                   [0, -13*L, 0, 0, 0, -3*L2, 0, -22*L, 0, 0, 0, 4*L2]])
     M = m*L/420 * M
@@ -169,4 +184,5 @@ def Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord):
     K = np.matmul(np.transpose(T), np.matmul(K, T))
     M = np.matmul(np.transpose(T), np.matmul(M, T))
     Q = np.matmul(np.transpose(T), np.matmul(Q, T))
+    
     return M, K, Q

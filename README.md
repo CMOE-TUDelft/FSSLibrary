@@ -169,7 +169,7 @@ python -c "import FSSLibrary; print('Import successful')"
 
 ## Authors
 
-- **Shagun Agarwal** - shagun.1995@gmail.com
+- **Shagun Agarwal** - shagun.1994@gmail.com
 - **Oriol Colomés** - j.o.colomesgene@tudelft.nl
 
 *Delft University of Technology*

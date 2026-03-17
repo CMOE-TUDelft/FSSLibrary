@@ -21,7 +21,7 @@ name = "FSSLibrary"
 dynamic = ["version"]
 description = "Set of python library made specifically for Floating and Submerged Structures course."
 authors = [
-    {name = "Shagun Agarwal", email = "shagun.1995@gmail.com"},
+    {name = "Shagun Agarwal", email = "shagun.1994@gmail.com"},
     {name = "Oriol Colomés", email = "j.o.colomesgene@tudelft.nl"}
 ]
 license = {text = "MIT"}
