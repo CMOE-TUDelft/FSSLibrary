@@ -118,6 +118,24 @@ class LinearWave2D:
         PdynRes = [self.pressureDynPoi(t,ix,iz) for ix, iz in zip(x,z)]        
         return PdynRes
     
+
+    def particlePosPoi(self, t: float, x: float, zin: float) -> tuple[float, float]:
+        et = self.waveElevation(t, x)   
+        # # Wheeler stretching
+        # z = self.d * ( self/d + zin ) / ( self/d + et ) - self.d     
+        # Not applying Wheeler Stretching
+        z = zin
+        if(z>0):
+            px = 0.0 * et
+            pz = 0.0 * et
+        else:
+            mag = self.H/2
+            px =  mag * np.cosh( self.k*(self.d + z) ) / np.sinh( self.k * self.d )
+            px = - px * np.sin( self.wavePhase(t, x) )
+            pz =  mag * np.sinh( self.k*(self.d + z) ) / np.sinh( self.k * self.d )
+            pz = pz * np.cos( self.wavePhase(t, x) )
+        return px, pz
+    
     
     def particleVelPoi(self, t, x, zin):        
         et = self.waveElevation(t, x)   
