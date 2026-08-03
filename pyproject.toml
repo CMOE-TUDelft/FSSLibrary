@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=45", "wheel"]
+requires = ["setuptools>=45", "wheel", "setuptools-git-versioning>=2.0,<3"]
 build-backend = "setuptools.build_meta"
 
 
@@ -11,9 +11,36 @@ Homepage = "https://github.com/CMOE-TUDelft/FSSLibrary"
 where = ["src"]
 
 
+[tool.setuptools-git-versioning]
+enabled = true
+tag_filter = "v*"
+dirty_template = "{tag}.post{ccount}+git.{sha}"
+
+
 [tool.setuptools.dynamic]
-version = { attr = "FSSLibrary.__version__" }
 dependencies = {file = ["requirements.txt"]}
+
+[tool.semantic_release]
+allow_zero_version = true
+major_on_zero = false
+branch = "main"
+tag_format = "v{version}"
+version_toml = []                 # version isn't stored in a file — setuptools-git-versioning reads the tag directly
+build_command = "pip install build --break-system-packages && python -m build"
+
+[tool.semantic_release.publish]
+upload_to_vcs_release = false
+
+[tool.semantic_release.changelog]
+mode = "update"
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+
 
 
 [project]

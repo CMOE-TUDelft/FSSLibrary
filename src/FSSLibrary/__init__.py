@@ -9,8 +9,6 @@ from FSSLibrary import WaveSpectrum
 # Ignore future warnings
 _warn.simplefilter(action="ignore", category=FutureWarning)
 
-__version__ = "v0.2.2"
-
 __copyright__ = """
 Shagun Agarwal and Oriol Colomés."""
 
