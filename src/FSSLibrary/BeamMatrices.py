@@ -29,6 +29,32 @@ The functions return the following outputs:
 import numpy as np
 import math
 
+
+class Beam2DElement:
+    n1: int
+    n2: int
+    m: float #kg/m
+    rho: float #kg/m3
+    E: float #Pa
+    A: float #m2
+    I: float #m4
+    EA: float #N
+    EI: float #N.m2
+    Tension: float #N    
+
+    def __init__(self, n1, n2, rho, E, A, I, Tension=0):
+        self.n1 = n1
+        self.n2 = n2
+        self.m = rho*A
+        self.rho = rho
+        self.E = E
+        self.A = A
+        self.I = I
+        self.EA = E*A
+        self.EI = E*I
+        self.Tension = Tension
+
+
 def Beam2DMatrices(m, EA, EI, NodeCoord):
     """
     Calculate the mass, stiffness and damping matrices for a 2D beam
