@@ -180,7 +180,11 @@ This project is licensed under the MIT License - see the project configuration f
 
 ## Version
 
-Current version: v0.2.0
+Semantic version, git tag usage. 
+
+```
+semantic-release version --no-vcs-release
+```
 
 ---
 

@@ -6,6 +6,9 @@ This file contains the functions to calculate the mass, stiffness and damping ma
 The functions are:
 - Beam2DMatrices(m, EA, EI, NodeCoord)
 - Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord)
+- BeamTensioned2DMatrices(m, EA, EI, Tension, NodeCoord)
+- Beam2D_ComputeBMAtMidpoint(EI, NodeCoord, U)
+- Beam2D_ComputeAxialStress(E, NodeCoord, U)
 
 The functions take the following inputs:
 - m         - mass per unit length [kg/m]
@@ -25,6 +28,7 @@ The functions return the following outputs:
 
 import numpy as np
 import math
+
 def Beam2DMatrices(m, EA, EI, NodeCoord):
     """
     Calculate the mass, stiffness and damping matrices for a 2D beam
@@ -186,3 +190,112 @@ def Beam3DMatrices(m, EA, EI, GJ, Im, NodeCoord):
     Q = np.matmul(np.transpose(T), np.matmul(Q, T))
     
     return M, K, Q
+
+
+def BeamTensioned2DMatrices(m, EA, EI, Tension, NodeCoord):
+    """
+    Calculate the mass, stiffness and damping matrices for a 2D beam
+
+    Inputs:
+    - m         - mass per unit length [kg/m]
+    - EA        - axial stiffness [N]
+    - EI        - bending stiffness [N.m2]
+    - Tension   - Pre-tension force [N]
+    - NodeCoord - ([xl, yl], [xr, yr])      
+        - left (l) and right (r) node coordinates
+    """
+
+
+    # 1 - calculate length of beam (L) and orientation alpha
+    xl = NodeCoord[0][0]    # x-coordinate of left node
+    yl = NodeCoord[0][1]    # y-coordinate of left node
+    xr = NodeCoord[1][0]    # x-coordinate of right node
+    yr = NodeCoord[1][1]    # y-coordinate of rigth node
+    L = np.sqrt((xr - xl)**2 + (yr - yl)**2)    # length
+    alpha = math.atan2(yr - yl, xr - xl)        # angle
+
+    # 2 - calculate transformation matrix T
+    C = np.cos(alpha)
+    S = np.sin(alpha)
+    T = np.array([[C, S, 0], [-S, C, 0], [0, 0, 1]])
+    T = np.asarray(np.bmat([[T, np.zeros((3,3))], [np.zeros((3, 3)), T]]))
+
+    M, K, Q = Beam2DMatrices(m, EA, EI, NodeCoord)
+
+
+    # 3 - calculate local stiffness and matrices
+    L2 = L*L
+    L3 = L*L2
+    K_Tension = Tension * np.array([[0, 0, 0, 0, 0, 0], 
+                    [0, 6./(5.*L), 1./10., 0, -6./(5.*L), 1./10.], 
+                    [0, 1./10., (2.*L)/15., 0, -1./10., -L/30.], 
+                    [0, 0, 0, 0, 0, 0], 
+                    [0, -6./(5.*L), -1./10., 0, 6./(5.*L), -1./10.], 
+                    [0, 1./10., -L/30., 0, -1./10., (2.*L)/15.] ])
+
+    # 4 - rotate the matrices
+    K_Tension = np.matmul(np.transpose(T), np.matmul(K_Tension, T))
+
+    return M, K+K_Tension, Q
+
+
+def Beam2D_ComputeBMAtMidpoint(EI, NodeCoord, U):
+    """
+    Compute the bending moment at the midpoint of a 2D beam
+
+    NOTE: Assuming the displacement vector U is in local coordinates of the beam element
+
+    Inputs:
+    - EI        - bending stiffness [N.m2]
+    - NodeCoord - ([xl, yl], [xr, yr])      
+        - left (l) and right (r) node coordinates
+    - U         - displacement vector [u1, v1, theta1, u2, v2, theta2]
+
+    Outputs:
+    - BM         - bending moment at midpoint [N.m]
+    """
+
+    # 1 - calculate length of beam (L) and orientation alpha
+    xl = NodeCoord[0][0]    # x-coordinate of left node
+    yl = NodeCoord[0][1]    # y-coordinate of left node
+    xr = NodeCoord[1][0]    # x-coordinate of right node
+    yr = NodeCoord[1][1]    # y-coordinate of rigth node
+    L = np.sqrt((xr - xl)**2 + (yr - yl)**2)    # length
+
+    V = np.array([U[1], U[2], U[4], U[5]])
+
+    x = L/2    # midpoint of the beam
+    H3j = np.array([-(6/L**2)+(12*x)/L**3, -(4/L)+(6*x)/L**2, 6/L**2-(12*x)/L**3, -(2/L)+(6*x)/L**2])
+
+    BM = EI*np.dot(H3j, V)    # bending moment at midpoint
+
+    return BM
+
+
+def Beam2D_ComputeAxialStress(E, NodeCoord, U):
+    """
+    Compute the axial stress at the midpoint of a 2D beam
+
+    NOTE: Assuming the displacement vector U is in local coordinates of the beam element
+
+    Inputs:
+    - E         - Young's modulus [Pa]
+    - NodeCoord - ([xl, yl], [xr, yr])      
+        - left (l) and right (r) node coordinates
+    - U         - displacement vector [u1, v1, theta1, u2, v2, theta2]
+
+    Outputs:
+    - AxialStress - axial stress at midpoint [Pa]
+    """
+
+    # 1 - calculate length of beam (L) and orientation alpha
+    xl = NodeCoord[0][0]    # x-coordinate of left node
+    yl = NodeCoord[0][1]    # y-coordinate of left node
+    xr = NodeCoord[1][0]    # x-coordinate of right node
+    yr = NodeCoord[1][1]    # y-coordinate of rigth node
+    L = np.sqrt((xr - xl)**2 + (yr - yl)**2)    # length
+
+    
+    AxialStress = E*(U[3]-U[0])/L    # axial stress at midpoint
+
+    return AxialStress
