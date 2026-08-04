@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.3.0 (2026-08-04)
+
+### Features
+
+- **beam**: Add new functions for tensioned beam matrices and stress calculations
+  ([`f8ae01f`](https://github.com/CMOE-TUDelft/FSSLibrary/commit/f8ae01f047ddb5b120a9a2a394f95abe4f947383))
+
+
 ## v0.2.0 (2026-08-03)
 
 ### Bug Fixes
